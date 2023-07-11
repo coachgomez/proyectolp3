@@ -4,20 +4,28 @@
 <form action="{{ route('actividad.store') }}" method="POST">
     @csrf
     
-<div class="form-group">
+    <div class="form-group">
     <label for="responsable_id">Responsable:</label>
     <select id="responsable_id" name="responsable_id" class="form-control">
         <option value="">Seleccionar Responsable</option>
         @foreach ($responsables as $responsable)
-            <option value="{{ $responsable->id }}">{{ $responsable->nombre }}</option>
+            <option value="{{ $responsable->getKey() }}">{{ $responsable->nombre }}</option>
         @endforeach
     </select>
-</div>
+    </div>
+
 
     <div class="form-group">
-        <label for="nombre_establecimiento">Nombre del Establecimiento:</label>
-        <input type="text" id="nombre_establecimiento" name="nombre_establecimiento" class="form-control">
+    <label for="establecimiento_id">Establecimiento:</label>
+    <select id="establecimiento_id" name="establecimiento_id" class="form-control">
+        <option value="">Seleccionar Establecimiento</option>
+        @foreach ($establecimientos as $establecimiento)
+            <option value="{{ $establecimiento->id }}">{{ $establecimiento->nombre }}</option>
+        @endforeach
+    </select>
     </div>
+
+
 
     <div class="form-group">
         <label for="nombre_actividad">Nombre de la Actividad:</label>

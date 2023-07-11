@@ -42,6 +42,7 @@ Route::post('/actividad', [ActividadCapacitacionController::class, 'store'])->na
 Route::get('/actividad/{id}', [ActividadCapacitacionController::class, 'show'])->name('actividad.show');
 
 
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -5,45 +5,44 @@ namespace App\Http\Controllers;
 use App\Models\ActividadCapacitacion;
 use Illuminate\Http\Request;
 use App\Models\Responsable;
+use App\Models\Establecimiento;
 
 class ActividadCapacitacionController extends Controller
 {
     public function create()
     {
-        $responsables = Responsable::pluck('nombre', 'id');
-        
-        $responsables = Responsable::pluck('nombre', 'id');
-        
-        return view('Actividad.create', compact('responsables'));
+        $responsables = Responsable::all();
+        $establecimientos = Establecimiento::whereNull('responsable_id')->get();
+
+        return view('Actividad.create', compact('responsables', 'establecimientos'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'responsable_id' => 'required',
-            'nombre_responsable' => 'required',
-            'nombre_establecimiento' => 'required',
+            'establecimiento_id' => 'required',
             'nombre_actividad' => 'required',
             'descripcion_actividad' => 'required',
             'tipo_capacitacion' => 'required',
             'descripcion_capacitacion' => 'required',
         ]);
 
+        $responsable = Responsable::findOrFail($request->input('responsable_id'));
+        $establecimiento = Establecimiento::findOrFail($request->input('establecimiento_id'));
+
         $actividad = new ActividadCapacitacion();
-        $actividad->responsable_id = $request->input('responsable_id');
+        $actividad->establecimiento_id = $establecimiento->id;
+        $actividad->nombre_establecimiento = $establecimiento->nombre;
+        $actividad->responsable_id = $responsable->id;
+        $actividad->nombre_responsable = $responsable->nombre;
+        $actividad->nombre_actividad = $request->input('nombre_actividad');
+        $actividad->descripcion_actividad = $request->input('descripcion_actividad');
+        $actividad->tipo_capacitacion = $request->input('tipo_capacitacion');
+        $actividad->descripcion_capacitacion = $request->input('descripcion_capacitacion');
+        $actividad->save();
 
-        // Crear un nuevo establecimiento en la base de datos
-        $actibidadCapacitacion = new ActividadCapacitacion();
-        $actibidadCapacitacion->nombre_responsable = $request->nombre_responsable;
-        $actibidadCapacitacion->nombre_establecimiento = $request->nombre_establecimiento;
-        $actibidadCapacitacion->nombre_actividad = $request->nombre_actividad;
-        $actibidadCapacitacion->descripcion_actividad = $request->descripcion_actividad;
-        $actibidadCapacitacion->tipo_capacitacion = $request->tipo_capacitacion;
-        $actibidadCapacitacion->descripcion_capacitacion = $request->descricion_capacitacion;        
-        $actibidadCapacitacion->save();
-
-        // Redireccionar a una página de éxito o a la vista de detalles del establecimiento
-        return redirect()->route('actividad.show', $actibidadCapacitacion->id);
+        return redirect()->route('actividad.show', $actividad->id);
     }
 
     public function show($id)
@@ -53,4 +52,3 @@ class ActividadCapacitacionController extends Controller
         return view('Actividad.show', compact('actividad'));
     }
 }
-
